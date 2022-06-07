@@ -53,22 +53,45 @@ router.post('/', (req, res) => {
     }
 })
 
-router.delete('/:id', (req, res) => {
-    Post.remove(req.params.id)
-        .then(post => {
-            if (!req.params.id) {
-                res.status(200).json({ message: 'The adopter has been nuked' });
-            } else {
-                res.status(404).json({ message: 'The adopter could not be found' });
-            }
-        })
-        .catch(error => {
-            res.status(500).json({ message: "The post could not be removed" })
-        })
+router.delete('/:id', async (req, res) => {
+    try {
+        const post = await Post.findById(req.params.id)
+        if (!post) {
+            res.status(404).json({ message: "The post with the specified ID does not exist" })
+        } else {
+            await Post.remove(req.params.id)
+            res.json(post)
+        }
+    } catch (error) {
+        res.status(500).json({ message: "The post could not be removed" })
+    }
 })
 
 router.put('/:id', (req, res) => {
-
+    let { title, contents } = req.body
+    if (!title || !contents) {
+        res.status(400).json({ message: "Please provide title and contents for the post" })
+    } else {
+        Post.findById(req.params.id)
+            .then(post => {
+                if (!post) {
+                    res.status(404).json({ message: "The post with the specified ID does not exist", })
+                } else {
+                    return Post.update(req.params.id, req.body)
+                }
+            })
+            .then(data => {
+                if (data) {
+                    return Post.findById(req.params.id)
+                }
+            })
+            .then(post => {
+                res.json(post)
+            })
+            .catch(error => {
+                res.status(500).json({ message: "The posts information could not be retrieved" })
+            })
+    }
 })
 
 router.get('/:id/messages', (req, res) => {
