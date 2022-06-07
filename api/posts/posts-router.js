@@ -4,6 +4,38 @@ const router = express.Router()
 
 
 
+router.get('/', (req, res) => {
+    res.json("yoooo")
+})
+
+router.get('/:id', (req, res) => {
+
+})
+
+router.post('/', (req, res) => {
+
+})
+
+router.delete('/:id', (req, res) => {
+
+})
+
+router.put('/:id', (req, res) => {
+
+})
+
+router.get('/:id/messages', (req, res) => {
+
+})
+
+
+
+
+
+
+
+
+
 // router.get('/', (req, res) => {
 //     Posts.find(req.query)
 //         .then(posts => {
